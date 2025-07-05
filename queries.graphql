@@ -1,0 +1,700 @@
+# GraphQL Queries for Liquid Arena Indexer
+# Based on LPBattleVault and LPFeeBattle contract events
+
+# ========================================
+# LPBattleVault Queries
+# ========================================
+
+# Query all battle-related events for a specific battle
+query GetBattleEvents($battleId: BigInt!) {
+  # Battle creation
+  battleCreated: lPBattleVault_BattleCreateds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+    duration
+    totalValueUSD
+  }
+  
+  # Battle joined
+  battleJoined: lPBattleVault_BattleJoineds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+    startTime
+  }
+  
+  # Battle resolved
+  battleResolved: lPBattleVault_BattleResolveds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+    resolver
+    resolverReward
+  }
+  
+  # Battle status changes
+  battleStatusChanged: lPBattleVault_BattleStatusChangeds(
+    where: { battleId: $battleId }
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    previousStatus
+    newStatus
+    timestamp
+  }
+  
+  # Player out of range events
+  playerOutOfRange: lPBattleVault_PlayerOutOfRanges(
+    where: { battleId: $battleId }
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    player
+    isCreator
+    timestamp
+  }
+  
+  # Emergency withdrawals
+  emergencyWithdrawal: lPBattleVault_EmergencyWithdrawals(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    to
+    tokenId
+  }
+}
+
+# Query all battles created by a specific address
+query GetBattlesByCreator($creator: String!, $first: Int = 10, $skip: Int = 0) {
+  lPBattleVault_BattleCreateds(
+    where: { creator: $creator }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+    duration
+    totalValueUSD
+  }
+}
+
+# Query all battles joined by a specific address
+query GetBattlesByOpponent($opponent: String!, $first: Int = 10, $skip: Int = 0) {
+  lPBattleVault_BattleJoineds(
+    where: { opponent: $opponent }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+    startTime
+  }
+}
+
+# Query battles won by a specific address
+query GetBattlesWon($winner: String!, $first: Int = 10, $skip: Int = 0) {
+  lPBattleVault_BattleResolveds(
+    where: { winner: $winner }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+    resolver
+    resolverReward
+  }
+}
+
+# Query recent battles with pagination
+query GetRecentBattles($first: Int = 20, $skip: Int = 0) {
+  lPBattleVault_BattleCreateds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+    duration
+    totalValueUSD
+  }
+}
+
+# Query ownership and admin events
+query GetOwnershipEvents($first: Int = 50, $skip: Int = 0) {
+  # Ownership transfers
+  ownershipTransferred: lPBattleVault_OwnershipTransferreds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    previousOwner
+    newOwner
+  }
+  
+  # Contract pause events
+  contractPaused: lPBattleVault_ContractPausedByOwners(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    by
+  }
+  
+  # Contract unpause events
+  contractUnpaused: lPBattleVault_ContractUnpausedByOwners(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    by
+  }
+  
+  # Pause events
+  paused: lPBattleVault_Pauseds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    account
+  }
+  
+  # Unpause events
+  unpaused: lPBattleVault_Unpauseds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    account
+  }
+}
+
+# Query configuration events
+query GetConfigurationEvents($first: Int = 50, $skip: Int = 0) {
+  # Price feed settings
+  priceFeedSet: lPBattleVault_PriceFeedSets(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    token
+    priceFeed
+  }
+  
+  # Stablecoin settings
+  stablecoinSet: lPBattleVault_StablecoinSets(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    token
+    isStablecoin
+  }
+}
+
+# ========================================
+# LPFeeBattle Queries
+# ========================================
+
+# Query all fee battle events for a specific battle
+query GetFeeBattleEvents($battleId: BigInt!) {
+  # Battle creation
+  battleCreated: lPFeeBattle_BattleCreateds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+  }
+  
+  # Battle joined
+  battleJoined: lPFeeBattle_BattleJoineds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+  }
+  
+  # Battle resolved
+  battleResolved: lPFeeBattle_BattleResolveds(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+  }
+  
+  # Battle status changes
+  battleStatusChanged: lPFeeBattle_BattleStatusChangeds(
+    where: { battleId: $battleId }
+    orderBy: timestamp
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    previousStatus
+    newStatus
+    timestamp
+  }
+  
+  # Fee performance updates
+  feePerformanceUpdate: lPFeeBattle_FeePerformanceUpdates(
+    where: { battleId: $battleId }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    player
+    feeGrowthUSD
+    feeRate
+    isCreator
+  }
+}
+
+# Query fee battles by creator
+query GetFeeBattlesByCreator($creator: String!, $first: Int = 10, $skip: Int = 0) {
+  lPFeeBattle_BattleCreateds(
+    where: { creator: $creator }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+  }
+}
+
+# Query fee battles by opponent
+query GetFeeBattlesByOpponent($opponent: String!, $first: Int = 10, $skip: Int = 0) {
+  lPFeeBattle_BattleJoineds(
+    where: { opponent: $opponent }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+  }
+}
+
+# Query fee battles won
+query GetFeeBattlesWon($winner: String!, $first: Int = 10, $skip: Int = 0) {
+  lPFeeBattle_BattleResolveds(
+    where: { winner: $winner }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+  }
+}
+
+# Query recent fee battles
+query GetRecentFeeBattles($first: Int = 20, $skip: Int = 0) {
+  lPFeeBattle_BattleCreateds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+  }
+}
+
+# Query fee performance updates for a player
+query GetFeePerformanceUpdates($player: String!, $first: Int = 50, $skip: Int = 0) {
+  lPFeeBattle_FeePerformanceUpdates(
+    where: { player: $player }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    player
+    feeGrowthUSD
+    feeRate
+    isCreator
+  }
+}
+
+# Query fee battle ownership and admin events
+query GetFeeBattleOwnershipEvents($first: Int = 50, $skip: Int = 0) {
+  # Ownership transfers
+  ownershipTransferred: lPFeeBattle_OwnershipTransferreds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    previousOwner
+    newOwner
+  }
+  
+  # Pause events
+  paused: lPFeeBattle_Pauseds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    account
+  }
+  
+  # Unpause events
+  unpaused: lPFeeBattle_Unpauseds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    account
+  }
+}
+
+# Query fee battle configuration events
+query GetFeeBattleConfigurationEvents($first: Int = 50, $skip: Int = 0) {
+  # Price feed settings
+  priceFeedSet: lPFeeBattle_PriceFeedSets(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    token
+    priceFeed
+  }
+  
+  # Stablecoin settings
+  stablecoinSet: lPFeeBattle_StablecoinSets(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    token
+    isStablecoin
+  }
+}
+
+# ========================================
+# Combined Queries
+# ========================================
+
+# Query all battles (both types) for a specific address
+query GetAllBattlesForAddress($address: String!, $first: Int = 20, $skip: Int = 0) {
+  # LPBattleVault battles created
+  lpBattleVaultCreated: lPBattleVault_BattleCreateds(
+    where: { creator: $address }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+    duration
+    totalValueUSD
+  }
+  
+  # LPBattleVault battles joined
+  lpBattleVaultJoined: lPBattleVault_BattleJoineds(
+    where: { opponent: $address }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+    startTime
+  }
+  
+  # LPFeeBattle battles created
+  lPFeeBattleCreated: lPFeeBattle_BattleCreateds(
+    where: { creator: $address }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+  }
+  
+  # LPFeeBattle battles joined
+  lPFeeBattleJoined: lPFeeBattle_BattleJoineds(
+    where: { opponent: $address }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    opponent
+    opponentTokenId
+  }
+}
+
+# Query all battles won by an address (both types)
+query GetAllBattlesWon($winner: String!, $first: Int = 20, $skip: Int = 0) {
+  # LPBattleVault battles won
+  lpBattleVaultWon: lPBattleVault_BattleResolveds(
+    where: { winner: $winner }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+    resolver
+    resolverReward
+  }
+  
+  # LPFeeBattle battles won
+  lPFeeBattleWon: lPFeeBattle_BattleResolveds(
+    where: { winner: $winner }
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+  }
+}
+
+# Query recent activity across both contracts
+query GetRecentActivity($first: Int = 10, $skip: Int = 0) {
+  # Recent LPBattleVault battles
+  recentLpBattleVault: lPBattleVault_BattleCreateds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+    duration
+    totalValueUSD
+  }
+  
+  # Recent LPFeeBattle battles
+  recentLpFeeBattle: lPFeeBattle_BattleCreateds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    creatorTokenId
+  }
+  
+  # Recent battle resolutions
+  recentResolutions: lPBattleVault_BattleResolveds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+    resolver
+    resolverReward
+  }
+  
+  # Recent fee battle resolutions
+  recentFeeResolutions: lPFeeBattle_BattleResolveds(
+    first: $first
+    skip: $skip
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+  }
+}
+
+# ========================================
+# Analytics Queries
+# ========================================
+
+# Query battle statistics for a time period
+query GetBattleStats($startTime: BigInt!, $endTime: BigInt!) {
+  # LPBattleVault stats
+  lpBattleVaultStats: lPBattleVault_BattleCreateds(
+    where: { 
+      id_gte: $startTime
+      id_lte: $endTime
+    }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+    totalValueUSD
+  }
+  
+  # LPFeeBattle stats
+  lPFeeBattleStats: lPFeeBattle_BattleCreateds(
+    where: { 
+      id_gte: $startTime
+      id_lte: $endTime
+    }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    creator
+  }
+  
+  # Battle resolutions
+  battleResolutions: lPBattleVault_BattleResolveds(
+    where: { 
+      id_gte: $startTime
+      id_lte: $endTime
+    }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+    resolverReward
+  }
+  
+  # Fee battle resolutions
+  feeBattleResolutions: lPFeeBattle_BattleResolveds(
+    where: { 
+      id_gte: $startTime
+      id_lte: $endTime
+    }
+    orderBy: id
+    orderDirection: desc
+  ) {
+    id
+    battleId
+    winner
+  }
+}
+
+# Query top players by battles created
+query GetTopCreators($first: Int = 10) {
+  lPBattleVault_BattleCreateds(
+    first: $first
+    orderBy: id
+    orderDirection: desc
+  ) {
+    creator
+    battleId
+    totalValueUSD
+  }
+}
+
+# Query top players by battles won
+query GetTopWinners($first: Int = 10) {
+  lPBattleVault_BattleResolveds(
+    first: $first
+    orderBy: id
+    orderDirection: desc
+  ) {
+    winner
+    battleId
+    resolverReward
+  }
+} 
