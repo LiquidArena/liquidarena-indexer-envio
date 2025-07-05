@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: envio-indexer
+networks:
+- id: 10143
+  start_block: 24770627
+  contracts:
+  - name: LPBattleVault
+    address:
+    - 0x9A84616E68F3B30752fB5659DCD33F3F49ee88dC
+    handler: src/EventHandlers.ts
+    events:
+    - event: BattleCreated(uint256 indexed battleId, address indexed creator, uint256 creatorTokenId, uint256 duration, uint256 totalValueUSD)
+    - event: BattleJoined(uint256 indexed battleId, address indexed opponent, uint256 opponentTokenId, uint256 startTime)
+    - event: BattleResolved(uint256 indexed battleId, address indexed winner, address indexed resolver, uint256 resolverReward)
+    - event: BattleStatusChanged(uint256 indexed battleId, string previousStatus, string newStatus, uint256 timestamp)
+    - event: ContractPausedByOwner(address indexed by)
+    - event: ContractUnpausedByOwner(address indexed by)
+    - event: EmergencyWithdrawal(uint256 indexed battleId, address indexed to, uint256 tokenId)
+    - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+    - event: Paused(address account)
+    - event: PlayerOutOfRange(uint256 indexed battleId, address indexed player, bool isCreator, uint256 timestamp)
+    - event: PriceFeedSet(address indexed token, address indexed priceFeed)
+    - event: StablecoinSet(address indexed token, bool isStablecoin)
+    - event: Unpaused(address account)
+  - name: LPFeeBattle
+    address:
+    - 0x47864330857eA75f50cf4a9092073D3C13794361
+    handler: src/EventHandlers.ts
+    events:
+    - event: BattleCreated(uint256 indexed battleId, address indexed creator, uint256 creatorTokenId)
+    - event: BattleJoined(uint256 indexed battleId, address indexed opponent, uint256 opponentTokenId)
+    - event: BattleResolved(uint256 indexed battleId, address indexed winner)
+    - event: BattleStatusChanged(uint256 indexed battleId, string previousStatus, string newStatus, uint256 timestamp)
+    - event: FeePerformanceUpdate(uint256 indexed battleId, address indexed player, uint256 feeGrowthUSD, uint256 feeRate, bool isCreator)
+    - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+    - event: Paused(address account)
+    - event: PriceFeedSet(address indexed token, address indexed priceFeed)
+    - event: StablecoinSet(address indexed token, bool isStablecoin)
+    - event: Unpaused(address account)
+unordered_multichain_mode: true
